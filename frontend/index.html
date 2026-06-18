@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ParkSense AI Dashboard</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.heat/0.2.0/leaflet-heat.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+  
+  <style>
+    :root {
+      --bg: #0d1117;
+      --card: #161b22;
+      --border: #30363d;
+      --accent: #f97316;
+      --text: #e6edf3;
+      --muted: #8b949e;
+      --low: #22c55e;
+      --medium: #f59e0b;
+      --high: #f97316;
+      --critical: #ef4444;
+    }
+    body {
+      margin: 0;
+      font-family: system-ui, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 20px;
+      background-color: var(--card);
+      border-bottom: 1px solid var(--border);
+    }
+    .navbar-left { display: flex; align-items: center; }
+    .logo { color: var(--accent); font-weight: bold; font-size: 20px; margin-right: 15px; }
+    .subtitle { color: var(--muted); font-size: 13px; margin-top: 4px; }
+    .navbar-right { display: flex; align-items: center; gap: 20px; }
+    #clock { font-family: monospace; color: var(--text); font-size: 14px; }
+    .badge { background-color: var(--accent); color: #fff; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: bold; }
+    
+    .kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; padding: 20px; }
+    .kpi-card { background-color: var(--card); border-top: 2px solid var(--accent); border-radius: 6px; padding: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+    .kpi-value { font-size: 28px; font-weight: bold; margin-bottom: 5px; }
+    .kpi-label { color: var(--muted); font-size: 14px; }
+    
+    .main-row { display: grid; grid-template-columns: 60% calc(40% - 20px); gap: 20px; padding: 0 20px; }
+    .card { background-color: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 20px; }
+    .map-title { margin: 0 0 15px 0; font-size: 16px; font-weight: 600; color: var(--text); }
+    #map { height: 480px; border-radius: 6px; width: 100%; background: #000; }
+    
+    .charts-container { display: flex; flex-direction: column; gap: 20px; }
+    .chart-box { height: 220px; position: relative; }
+    .chart-title { margin: 0 0 10px 0; font-size: 14px; color: var(--muted); font-weight: 500; text-align: center; }
+    
+    .legend-container { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px; font-size: 12px; justify-content: center; max-height: 80px; overflow-y: auto; }
+    .legend-item { display: flex; align-items: center; gap: 5px; }
+    .legend-color { width: 12px; height: 12px; border-radius: 2px; }
+    
+    .bottom-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; padding: 20px; }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    th, td { padding: 12px 10px; text-align: left; border-bottom: 1px solid var(--border); }
+    th { color: var(--muted); font-weight: 500; font-size: 13px; }
+    tr:nth-child(even) { background-color: #1c2128; }
+    .risk-badge { padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: bold; color: #fff; display: inline-block; }
+    
+    .predict-form { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px; }
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-group.full { grid-column: span 2; }
+    .form-group label { font-size: 13px; color: var(--muted); }
+    .form-group input, .form-group select { background-color: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 10px; border-radius: 4px; outline: none; }
+    .form-group input:focus, .form-group select:focus { border-color: var(--accent); }
+    .form-group input[type="range"] { padding: 0; margin-top: 8px; }
+    
+    .btn-primary { background-color: var(--accent); color: #fff; border: none; padding: 12px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 14px; margin-top: 15px; transition: 0.2s; }
+    .btn-primary:hover { background-color: #ea580c; }
+    
+    .result-card { margin-top: 20px; padding: 20px; background-color: var(--bg); border: 1px solid var(--border); border-radius: 6px; display: none; opacity: 0; transform: translateY(10px); transition: all 0.4s ease; }
+    .result-card.show { display: block; opacity: 1; transform: translateY(0); }
+    .result-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .result-score { font-size: 36px; font-weight: bold; }
+    .result-action { font-size: 15px; margin-bottom: 8px; font-weight: 500; }
+    .result-window { font-size: 13px; color: var(--muted); }
+    
+    footer { text-align: center; padding: 30px; color: var(--muted); font-size: 12px; border-top: 1px solid var(--border); margin-top: 20px; }
+  </style>
+</head>
+<body>
+
+  <div class="navbar">
+    <div class="navbar-left">
+      <span class="logo">🅿 ParkSense AI</span>
+      <span class="subtitle">Bangalore Traffic Intelligence</span>
+    </div>
+    <div class="navbar-right">
+      <span id="clock">00:00:00</span>
+      <span class="badge">Gridlock Hackathon 2.0</span>
+    </div>
+  </div>
+
+  <div class="kpi-row">
+    <div class="kpi-card">
+      <div class="kpi-value" id="val-total">0</div>
+      <div class="kpi-label">Total Violations</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-value" id="val-peak">-</div>
+      <div class="kpi-label">Peak Violation Hour</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-value" id="val-night" data-is-pct="true">0%</div>
+      <div class="kpi-label">Night Violation %</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-value" id="val-hotspots">0</div>
+      <div class="kpi-label">HIGH/CRITICAL zones</div>
+    </div>
+  </div>
+
+  <div class="main-row">
+    <div class="card">
+      <h3 class="map-title">Live Violation Heatmap — Bangalore</h3>
+      <div id="map"></div>
+    </div>
+    <div class="charts-container">
+      <div class="card">
+        <h3 class="chart-title">Violations by Hour</h3>
+        <div class="chart-box"><canvas id="trendChart"></canvas></div>
+      </div>
+      <div class="card">
+        <h3 class="chart-title">Violation Types</h3>
+        <div class="chart-box"><canvas id="typeChart"></canvas></div>
+        <div class="legend-container" id="type-legend"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bottom-row">
+    <div class="card">
+      <h3 class="map-title">Top 10 Enforcement Zones</h3>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Rank</th>
+              <th>Zone</th>
+              <th>Peak Hour</th>
+              <th>Score</th>
+              <th>Risk</th>
+            </tr>
+          </thead>
+          <tbody id="hotspot-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card">
+      <h3 class="map-title">🔮 Predict Zone Risk</h3>
+      <div class="predict-form">
+        <div class="form-group">
+          <label>Latitude</label>
+          <input type="number" id="pred-lat" value="12.975" step="0.001">
+        </div>
+        <div class="form-group">
+          <label>Longitude</label>
+          <input type="number" id="pred-lon" value="77.575" step="0.001">
+        </div>
+        <div class="form-group full">
+          <label>Hour: <span id="hour-label" style="color:var(--text);font-weight:bold;">2 AM</span></label>
+          <input type="range" id="pred-hour" min="0" max="23" value="2">
+        </div>
+        <div class="form-group full">
+          <label>Day of Week</label>
+          <select id="pred-day">
+            <option value="0">Monday</option>
+            <option value="1" selected>Tuesday</option>
+            <option value="2">Wednesday</option>
+            <option value="3">Thursday</option>
+            <option value="4">Friday</option>
+            <option value="5">Saturday</option>
+            <option value="6">Sunday</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn-primary" onclick="doPredict()" style="width: 100%;">Analyze Risk</button>
+
+      <div class="result-card" id="result-card">
+        <div class="result-header">
+          <span class="result-score" id="res-score">0.0</span>
+          <span class="risk-badge" id="res-badge">LOW</span>
+        </div>
+        <div class="result-action" id="res-action">Action required.</div>
+        <div class="result-window" id="res-window">Peak window...</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="main-row extra-row" style="margin-top:20px; grid-template-columns: 1fr 1fr; gap:20px; padding:0 20px;">
+    <div class="card">
+      <h3 class="map-title">💬 Ask ParkSense AI</h3>
+      <div class="form-group">
+        <input type="text" id="query-input" placeholder="e.g. Which zone is worst on Monday morning?">
+      </div>
+      <button class="btn-primary" onclick="doQuery()" style="margin-top:10px; width:100%;">Ask</button>
+      <div id="query-answer" style="display:none; margin-top:15px; padding:15px; background-color:var(--bg); border-left:3px solid var(--accent); font-size:14px;">
+      </div>
+    </div>
+    
+    <div class="card">
+      <h3 class="map-title">📋 Enforcement Intelligence Report</h3>
+      <button class="btn-primary" onclick="generateReport()" style="margin-top:0; margin-bottom:15px; background-color:transparent; border:1px solid var(--accent); color:var(--accent); width:100%;">Generate Report</button>
+      <div id="report-container" style="display:none; max-height:400px; overflow-y:auto; background-color:var(--bg); padding:15px; border-radius:4px; font-family:monospace; font-size:13px; line-height:1.4;">
+      </div>
+      <button id="download-btn" class="btn-primary" onclick="downloadReport()" style="display:none; margin-top:10px; width:100%;">Download Report</button>
+    </div>
+  </div>
+
+  <footer>
+    ParkSense AI | Built for Gridlock Hackathon 2.0 | Bangalore Traffic Police Intelligence System
+  </footer>
+
+  <script>
+    const API = "http://localhost:8000";
+
+    // Clock
+    setInterval(() => {
+      document.getElementById('clock').innerText = new Date().toLocaleTimeString();
+    }, 1000);
+
+    // Number animation
+    function animateValue(obj, start, end, duration) {
+      let startTimestamp = null;
+      const step = (timestamp) => {
+        if (!startTimestamp) startTimestamp = timestamp;
+        const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+        const val = Math.floor(progress * (end - start) + start);
+        if (obj.dataset.isPct) {
+            obj.innerHTML = val + "%";
+        } else {
+            obj.innerHTML = val.toLocaleString();
+        }
+        
+        if (progress < 1) {
+          window.requestAnimationFrame(step);
+        } else {
+          obj.innerHTML = obj.dataset.finalText || (obj.dataset.isPct ? end + "%" : end.toLocaleString());
+        }
+      };
+      window.requestAnimationFrame(step);
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      // 1. STATS
+      try {
+        const res = await fetch(`${API}/api/stats`);
+        const data = await res.json();
+        
+        const vTotal = document.getElementById('val-total');
+        vTotal.dataset.finalText = data.total_violations.toLocaleString();
+        animateValue(vTotal, 0, data.total_violations, 1500);
+
+        const vPeak = document.getElementById('val-peak');
+        vPeak.innerText = data.peak_hour_label;
+
+        const vNight = document.getElementById('val-night');
+        vNight.dataset.finalText = data.night_violation_pct + "% after 8PM";
+        animateValue(vNight, 0, data.night_violation_pct, 1500);
+
+        const vHotspots = document.getElementById('val-hotspots');
+        vHotspots.dataset.finalText = data.hotspot_count.toLocaleString() + " HIGH/CRITICAL zones";
+        animateValue(vHotspots, 0, data.hotspot_count, 1500);
+      } catch (e) { console.error('Stats error:', e); }
+
+      // 2. MAP & HEATMAP
+      const map = L.map('map').setView([12.97, 77.59], 12);
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; CartoDB'
+      }).addTo(map);
+
+      try {
+        const res = await fetch(`${API}/api/heatmap`);
+        const data = await res.json();
+        const heatPoints = data.features.map(f => [
+          f.geometry.coordinates[1],
+          f.geometry.coordinates[0],
+          f.properties.congestion_score / 100
+        ]);
+        L.heatLayer(heatPoints, {
+          radius: 25,
+          blur: 20,
+          gradient: {0.2:'#22c55e', 0.5:'#f59e0b', 0.75:'#f97316', 1.0:'#ef4444'}
+        }).addTo(map);
+      } catch (e) { console.error('Heatmap error:', e); }
+
+      // 3. HOTSPOTS
+      try {
+        const res = await fetch(`${API}/api/hotspots`);
+        const data = await res.json();
+        
+        data.forEach(h => {
+          L.circleMarker([h.lat, h.lon], {
+            color: h.risk_color,
+            fillColor: h.risk_color,
+            fillOpacity: 0.8,
+            radius: 8
+          }).addTo(map).bindPopup(`
+            <div style="color:#000;">
+              <b>Rank #${h.rank}</b><br>
+              ${h.junction_name}<br>
+              Score: ${h.avg_score}<br>
+              Peak: ${h.peak_hour_label}<br>
+              Risk: ${h.risk_level}
+            </div>
+          `);
+        });
+
+        const tbody = document.getElementById('hotspot-tbody');
+        data.slice(0, 10).forEach(h => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>#${h.rank}</td>
+            <td>${h.junction_name}</td>
+            <td>${h.peak_hour_label}</td>
+            <td>${h.avg_score}</td>
+            <td><span class="risk-badge" style="background-color:${h.risk_color}">${h.risk_level}</span></td>
+          `;
+          tbody.appendChild(tr);
+        });
+      } catch (e) { console.error('Hotspots error:', e); }
+
+      // 4. TREND CHART
+      try {
+        const res = await fetch(`${API}/api/trend`);
+        const data = await res.json();
+        const ctx = document.getElementById('trendChart').getContext('2d');
+        
+        const colors = data.labels.map((_, i) => {
+          if(i >= 20 || i <= 6) return '#f97316';
+          return '#374151';
+        });
+
+        new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: data.labels,
+            datasets: [{
+              data: data.data,
+              backgroundColor: colors,
+              borderRadius: 4
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+              x: { 
+                ticks: { callback: function(val, i) { return i % 3 === 0 ? this.getLabelForValue(val) : ''; }, color: '#8b949e' },
+                grid: { display: false }
+              },
+              y: { 
+                ticks: { color: '#8b949e' },
+                grid: { color: '#30363d' }
+              }
+            }
+          }
+        });
+      } catch (e) { console.error('Trend error:', e); }
+
+      // 5. VIOLATIONS PIE
+      try {
+        const res = await fetch(`${API}/api/violations/type`);
+        const data = await res.json();
+        const ctx = document.getElementById('typeChart').getContext('2d');
+        
+        new Chart(ctx, {
+          type: 'doughnut',
+          data: {
+            labels: data.labels,
+            datasets: [{
+              data: data.data,
+              backgroundColor: data.colors,
+              borderWidth: 0
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false }, tooltip: { enabled: true } },
+            cutout: '70%'
+          }
+        });
+
+        const legContainer = document.getElementById('type-legend');
+        data.labels.forEach((label, i) => {
+          legContainer.innerHTML += `
+            <div class="legend-item" title="${label}">
+              <div class="legend-color" style="background-color:${data.colors[i]}"></div>
+              <span>${label.substring(0, 20)}${label.length>20?'...':''} (${data.data[i].toLocaleString()})</span>
+            </div>
+          `;
+        });
+      } catch (e) { console.error('Violations error:', e); }
+    });
+
+    // PREDICT FUNCTION
+    const hourSlider = document.getElementById('pred-hour');
+    const hourLabel = document.getElementById('hour-label');
+    hourSlider.addEventListener('input', (e) => {
+      hourLabel.innerText = formatHour(parseInt(e.target.value));
+    });
+
+    function formatHour(h) {
+      if(h===0) return "12 AM";
+      if(h===12) return "12 PM";
+      return h < 12 ? `${h} AM` : `${h-12} PM`;
+    }
+
+    async function doPredict() {
+      const lat = parseFloat(document.getElementById('pred-lat').value);
+      const lon = parseFloat(document.getElementById('pred-lon').value);
+      const hour = parseInt(document.getElementById('pred-hour').value);
+      const day = parseInt(document.getElementById('pred-day').value);
+
+      try {
+        const res = await fetch(`${API}/api/predict`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ lat, lon, hour, day_of_week: day })
+        });
+        const data = await res.json();
+
+        const card = document.getElementById('result-card');
+        document.getElementById('res-score').innerText = data.congestion_score.toFixed(1);
+        document.getElementById('res-score').style.color = data.risk_color;
+        
+        const badge = document.getElementById('res-badge');
+        badge.innerText = data.risk_level;
+        badge.style.backgroundColor = data.risk_color;
+
+        document.getElementById('res-action').innerText = data.recommended_action;
+        document.getElementById('res-window').innerText = data.peak_window;
+
+        card.classList.add('show');
+      } catch (e) {
+        console.error('Predict error:', e);
+        alert('Prediction failed. Is the API running?');
+      }
+    }
+
+    function parseMD(md) {
+      let inTable = false;
+      const lines = md.split('\n');
+      let html = '';
+      for(let line of lines) {
+        if(line.startsWith('## ')) {
+          html += `<h2 style="color:var(--accent);margin-top:15px;margin-bottom:5px;">${line.substring(3)}</h2>`;
+        } else if(line.startsWith('# ')) {
+          html += `<h1 style="color:var(--text);margin-top:10px;margin-bottom:5px;">${line.substring(2)}</h1>`;
+        } else if(line.startsWith('- ')) {
+          html += `<li style="margin-left:15px;">${line.substring(2).replace(/\*\*(.*?)\*\*/g, '<b>$1</b>')}</li>`;
+        } else if(line.startsWith('|')) {
+          if(line.includes('---')) continue;
+          if(!inTable) { html += '<table style="width:100%; border-collapse:collapse; margin:10px 0; font-size:12px;">'; inTable = true; }
+          const cells = line.split('|').filter(c => c !== '');
+          html += '<tr>' + cells.map(c => `<td style="padding:6px; border:1px solid #30363d;">${c.trim().replace(/\*\*(.*?)\*\*/g, '<b>$1</b>')}</td>`).join('') + '</tr>';
+        } else {
+          if(inTable) { html += '</table>'; inTable = false; }
+          if(line.trim()) {
+            html += `<div style="margin-bottom:5px;">${line.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>')}</div>`;
+          }
+        }
+      }
+      if(inTable) html += '</table>';
+      return html;
+    }
+
+    async function doQuery() {
+      const q = document.getElementById('query-input').value;
+      const ansBox = document.getElementById('query-answer');
+      if(!q) return;
+      ansBox.style.display = 'block';
+      ansBox.innerHTML = '<span style="color:var(--muted);">Thinking...</span>';
+      try {
+        const res = await fetch(`${API}/api/query`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ question: q })
+        });
+        const data = await res.json();
+        ansBox.innerHTML = data.answer;
+      } catch (e) {
+        ansBox.innerHTML = '<span style="color:red;">Error fetching answer.</span>';
+      }
+    }
+
+    let currentReportTxt = "";
+    async function generateReport() {
+      const btn = document.querySelector('button[onclick="generateReport()"]');
+      const box = document.getElementById('report-container');
+      const dlBtn = document.getElementById('download-btn');
+      
+      btn.innerText = "Generating...";
+      box.style.display = 'block';
+      box.innerHTML = '<span style="color:var(--muted);">Analyzing data...</span>';
+      
+      try {
+        const res = await fetch(`${API}/api/report`);
+        const data = await res.json();
+        currentReportTxt = data.report;
+        box.innerHTML = parseMD(currentReportTxt);
+        dlBtn.style.display = 'block';
+      } catch (e) {
+        box.innerHTML = '<span style="color:red;">Error generating report.</span>';
+      }
+      btn.innerText = "Generate Report";
+    }
+
+    function downloadReport() {
+      if(!currentReportTxt) return;
+      const blob = new Blob([currentReportTxt], {type: "text/plain"});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = "ParkSense_Report.txt";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+  </script>
+</body>
+</html>

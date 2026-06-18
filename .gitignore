@@ -1,0 +1,10 @@
+# Data
+data.csv
+
+# Models
+backend/models/*.pkl
+
+# Python
+__pycache__/
+*.pyc
+.env
