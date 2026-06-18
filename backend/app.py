@@ -8,6 +8,7 @@ from model import ParkingCongestionModel
 import os
 import datetime
 from analyzer import CongestionAnalyzer
+from fastapi.responses import RedirectResponse
 
 app_state = {}
 
@@ -50,6 +51,20 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+@app.get("/")
+def root():
+    return {
+        "project": "ParkSense AI",
+        "hackathon": "Gridlock Hackathon 2.0",
+        "status": "running",
+        "endpoints": [
+            "/api/stats", "/api/heatmap", "/api/hotspots",
+            "/api/trend", "/api/predict", "/api/report", "/api/query"
+        ],
+        "dashboard": "Open frontend/index.html in browser",
+        "docs": "/docs"
+    }
 
 @app.get("/api/stats")
 def get_stats():

@@ -94,7 +94,7 @@
 
   <div class="navbar">
     <div class="navbar-left">
-      <span class="logo">🅿 ParkSense AI</span>
+      <span class="logo">🅿 ParkSense AI: Enforcement Decision Support System</span>
       <span class="subtitle">Bangalore Traffic Intelligence</span>
     </div>
     <div class="navbar-right">
@@ -313,7 +313,7 @@
               ${h.junction_name}<br>
               Score: ${h.avg_score}<br>
               Peak: ${h.peak_hour_label}<br>
-              Risk: ${h.risk_level}
+              Risk: <span class="risk-badge" style="background-color:${h.risk_color}; padding:2px 6px; font-size:10px;">${h.risk_level}</span>
             </div>
           `);
         });
