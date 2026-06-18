@@ -1,4 +1,4 @@
-# ParkSense AI 🅿
+# Traffiq 🅿
 ### AI-Driven Parking Violation Intelligence for Bangalore Traffic
 > Built for Gridlock Hackathon 2.0 — Round 2
 
@@ -8,14 +8,14 @@ chokes Bangalore's carriageways. Enforcement is reactive and patrol-based with
 no data-driven prioritization.
 
 ## Our Solution
-ParkSense AI analyzes 115,350 real police violation records to:
+Traffiq analyzes 115,350 real police violation records to:
 - Detect illegal parking hotspots via spatial grid clustering
 - Quantify congestion impact using XGBoost (R² = 0.99)
 - Predict zone risk for any location + time combination
 - Generate AI enforcement patrol schedules automatically
 
 ## Strategic Value
-ParkSense AI enables Bangalore Traffic Police to shift from **reactive, 
+Traffiq enables Bangalore Traffic Police to shift from **reactive, 
 patrol-based enforcement** to **predictive, resource-efficient deployment**.
 
 - Targeting only the top 5% of high-impact zones covers 40%+ of all violations

@@ -46,7 +46,7 @@ class CongestionAnalyzer:
         
         unique_junctions = df['junction_name'].nunique()
         
-        report = f"""# ParkSense AI — Enforcement Intelligence Report
+        report = f"""# Traffiq — Enforcement Intelligence Report
 **Generated:** {now}  |  **City:** Bangalore  |  **Data:** Jan–May 2023
 
 ## Executive Summary
@@ -124,4 +124,4 @@ class CongestionAnalyzer:
         elif "vehicle" in q or "car" in q or "scooter" in q:
             return "Scooters and Cars make up the vast majority of parking violations, accounting for over 80% of all recorded incidents."
         else:
-            return "ParkSense AI continuously analyzes traffic data to optimize patrol routes. Try asking about peak hours, worst zones, or vehicle types."
+            return "Traffiq continuously analyzes traffic data to optimize patrol routes. Try asking about peak hours, worst zones, or vehicle types."

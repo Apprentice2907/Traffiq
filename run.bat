@@ -1,6 +1,6 @@
 @echo off
 echo ================================
-echo   ParkSense AI - Starting Up
+echo   Traffiq - Starting Up
 echo ================================
 echo.
 echo Installing dependencies...
@@ -17,7 +17,7 @@ echo Opening dashboard...
 start http://localhost:8000/docs
 start frontend/index.html
 echo.
-echo ParkSense AI is running!
+echo Traffiq is running!
 echo Dashboard: frontend/index.html
 echo API Docs:  http://localhost:8000/docs
 echo.

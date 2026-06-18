@@ -55,7 +55,7 @@ app.add_middleware(
 @app.get("/")
 def root():
     return {
-        "project": "ParkSense AI",
+        "project": "Traffiq",
         "hackathon": "Gridlock Hackathon 2.0",
         "status": "running",
         "endpoints": [
