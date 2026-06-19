@@ -24,14 +24,22 @@ class ParkingCongestionModel:
 
     def load(self):
         model_path = os.path.join(self.model_dir, "model.pkl")
-        ve_path = os.path.join(self.model_dir, "vehicle_encoder.pkl")
-        vo_path = os.path.join(self.model_dir, "violation_encoder.pkl")
-        sc_path = os.path.join(self.model_dir, "scaler.pkl")
-        
-        self.model = joblib.load(model_path)
-        self.vehicle_encoder = joblib.load(ve_path)
-        self.violation_encoder = joblib.load(vo_path)
-        self.scaler = joblib.load(sc_path)
+        if os.path.exists(model_path):
+            # Load existing model
+            self.model = joblib.load(model_path)
+            self.vehicle_encoder = joblib.load(os.path.join(self.model_dir, "vehicle_encoder.pkl"))
+            self.violation_encoder = joblib.load(os.path.join(self.model_dir, "violation_encoder.pkl"))
+            self.scaler = joblib.load(os.path.join(self.model_dir, "scaler.pkl"))
+        else:
+            # No saved model found — train from scratch
+            print("No saved model found. Training from scratch...")
+            from data_loader import DataLoader
+            DATA_PATH = os.environ.get("DATA_PATH", "../data.csv.gz")
+            dl = DataLoader(DATA_PATH)
+            df = dl.load_and_clean()
+            df = dl.create_grid_cells(df)
+            self.train(df)
+            print("Training complete.")
 
     def _load_models_if_exist(self):
         try:

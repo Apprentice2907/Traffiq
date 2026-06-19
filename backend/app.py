@@ -8,7 +8,8 @@ from model import ParkingCongestionModel
 import os
 import datetime
 from analyzer import CongestionAnalyzer
-from fastapi.responses import RedirectResponse
+from fastapi.responses import RedirectResponse, FileResponse
+from fastapi.staticfiles import StaticFiles
 
 app_state = {}
 
@@ -26,7 +27,11 @@ async def lifespan(app: FastAPI):
     df = dl.create_grid_cells(df)
     
     model = ParkingCongestionModel()
-    model.load()
+    try:
+        model.load()
+    except Exception as e:
+        print(f"Model load/train error: {e}")
+        raise
     
     app_state['df'] = df
     app_state['dl'] = dl
@@ -52,7 +57,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.get("/")
+@app.get("/api")
 def root():
     return {
         "project": "Traffiq",
@@ -62,7 +67,7 @@ def root():
             "/api/stats", "/api/heatmap", "/api/hotspots",
             "/api/trend", "/api/predict", "/api/report", "/api/query"
         ],
-        "dashboard": "Open frontend/index.html in browser",
+        "dashboard": "Served at /",
         "docs": "/docs"
     }
 
@@ -223,6 +228,8 @@ def post_query(req: QueryRequest):
         "top_zone": str(top_zone)
     }
     return {"question": req.question, "answer": analyzer.answer_query(req.question, stats)}
+
+app.mount("/", StaticFiles(directory="../frontend", html=True), name="frontend")
 
 if __name__ == "__main__":
     import uvicorn
