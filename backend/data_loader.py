@@ -3,8 +3,10 @@ import numpy as np
 import json
 import os
 
+DATA_PATH = os.environ.get("DATA_PATH", "../data.csv.gz")
+
 class DataLoader:
-    def __init__(self, file_path):
+    def __init__(self, file_path=DATA_PATH):
         self.file_path = file_path
 
     def load_and_clean(self):
@@ -80,8 +82,7 @@ class DataLoader:
 
 if __name__ == "__main__":
     # Adjust path safely to allow running from Gridlock root or backend dir
-    file_path = "../data.csv" if not os.path.exists("data.csv") else "data.csv"
-    dl = DataLoader(file_path)
+    dl = DataLoader()
     df = dl.load_and_clean()
     df = dl.create_grid_cells(df)
     

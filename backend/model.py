@@ -7,8 +7,10 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder, MinMaxScaler
 from sklearn.metrics import mean_squared_error, r2_score
 
+MODELS_DIR = os.environ.get("MODELS_DIR", "models")
+
 class ParkingCongestionModel:
-    def __init__(self, model_dir="models"):
+    def __init__(self, model_dir=MODELS_DIR):
         base_dir = os.path.dirname(os.path.abspath(__file__))
         self.model_dir = os.path.join(base_dir, model_dir)
         os.makedirs(self.model_dir, exist_ok=True)
@@ -222,8 +224,7 @@ class ParkingCongestionModel:
 if __name__ == "__main__":
     from data_loader import DataLoader
     
-    file_path = "../data.csv" if not os.path.exists("data.csv") else "data.csv"
-    dl = DataLoader(file_path)
+    dl = DataLoader()
     df = dl.load_and_clean()
     df = dl.create_grid_cells(df)
     

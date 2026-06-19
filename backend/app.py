@@ -21,7 +21,7 @@ def format_hour(h):
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     print("Loading data and model...")
-    dl = DataLoader("../data.csv")
+    dl = DataLoader()
     df = dl.load_and_clean()
     df = dl.create_grid_cells(df)
     
