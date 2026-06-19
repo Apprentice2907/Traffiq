@@ -1,0 +1,9 @@
+__pycache__
+*.pyc
+backend/models/*.pkl
+*.zip
+explore.py
+test_api.py
+run.bat
+run.sh
+data.csv

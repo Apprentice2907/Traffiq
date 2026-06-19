@@ -34,7 +34,7 @@ class ParkingCongestionModel:
             # No saved model found — train from scratch
             print("No saved model found. Training from scratch...")
             from data_loader import DataLoader
-            DATA_PATH = os.environ.get("DATA_PATH", "../data.csv.gz")
+            DATA_PATH = os.environ.get("DATA_PATH", "data.csv")
             dl = DataLoader(DATA_PATH)
             df = dl.load_and_clean()
             df = dl.create_grid_cells(df)
@@ -86,13 +86,18 @@ class ParkingCongestionModel:
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
         
         print("Training XGBoost Regressor...")
-        self.model = XGBRegressor(
-            n_estimators=200,
-            max_depth=6,
+        IS_CLOUD = os.environ.get("HF_SPACE") or os.environ.get("RENDER")
+
+        params = dict(
+            n_estimators=100 if IS_CLOUD else 200,
+            max_depth=4 if IS_CLOUD else 6,
             learning_rate=0.1,
             subsample=0.8,
+            tree_method='hist',
             random_state=42
-        )
+        ) if True else {}
+        
+        self.model = XGBRegressor(**params)
         self.model.fit(X_train, y_train)
         
         # Evaluate
