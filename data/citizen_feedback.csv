@@ -1,0 +1,81 @@
+complaint_id,zone_id,timestamp,text
+C1000,12.99_77.58500000000001,2026-07-04T14:13:50.657889,Taxi stand overflowing onto the main road.
+C1001,12.96_77.575,2026-07-03T03:13:50.657889,No parking zone ignored by autos.
+C1002,12.97_77.545,2026-06-30T17:13:50.657889,Traffic police nowhere to be seen while cars block the intersection.
+C1003,12.98_77.61,2026-07-02T16:13:50.657889,Delivery boys parking haphazardly on the corner.
+C1004,13.005_77.69500000000001,2026-06-29T12:13:50.657889,"Bikes parked on the footpath, pedestrians have to walk on the road."
+C1005,12.97_77.575,2026-07-06T15:13:50.657889,Cars blocking driveway near the junction every evening.
+C1006,13.005_77.57000000000001,2026-06-30T06:13:50.657889,Traffic police nowhere to be seen while cars block the intersection.
+C1007,12.98_77.60000000000001,2026-07-03T19:13:50.657889,"Bikes parked on the footpath, pedestrians have to walk on the road."
+C1008,13.005_77.57000000000001,2026-07-02T08:13:50.657889,"Bikes parked on the footpath, pedestrians have to walk on the road."
+C1009,12.975_77.575,2026-06-29T19:13:50.657889,"Bikes parked on the footpath, pedestrians have to walk on the road."
+C1010,12.96_77.575,2026-07-06T10:13:50.657889,No parking zone ignored by autos.
+C1011,12.97_77.55,2026-07-04T20:13:50.657889,Delivery boys parking haphazardly on the corner.
+C1012,12.97_77.55,2026-06-29T16:13:50.657889,Taxi stand overflowing onto the main road.
+C1013,12.93_77.69,2026-07-01T13:13:50.657889,No parking zone ignored by autos.
+C1014,12.96_77.575,2026-07-01T01:13:50.657889,No parking zone ignored by autos.
+C1015,12.98_77.61,2026-07-06T05:13:50.657889,"Truck unloaded goods during peak hour, total gridlock."
+C1016,12.975_77.575,2026-07-05T04:13:50.657889,Huge traffic jam caused by illegal parking near the tech park.
+C1017,12.97_77.575,2026-06-30T04:13:50.657889,"Truck unloaded goods during peak hour, total gridlock."
+C1018,12.97_77.575,2026-07-02T19:13:50.657889,Cars blocking driveway near the junction every evening.
+C1019,12.975_77.575,2026-06-30T20:13:50.657889,Taxi stand overflowing onto the main road.
+C1020,12.975_77.575,2026-07-01T16:13:50.657889,No parking zone ignored by autos.
+C1021,12.965_77.575,2026-07-01T18:13:50.657889,"Bikes parked on the footpath, pedestrians have to walk on the road."
+C1022,12.93_77.69,2026-07-04T21:13:50.657889,No parking zone ignored by autos.
+C1023,12.97_77.55,2026-06-29T11:13:50.657889,Bus stop is completely blocked by parked private vehicles.
+C1024,13.035_77.58500000000001,2026-07-01T18:13:50.657889,Taxi stand overflowing onto the main road.
+C1025,12.975_77.58,2026-07-04T05:13:50.657889,"Truck unloaded goods during peak hour, total gridlock."
+C1026,12.96_77.575,2026-07-03T17:13:50.657889,Traffic police nowhere to be seen while cars block the intersection.
+C1027,12.97_77.55,2026-07-06T03:13:50.657889,Huge traffic jam caused by illegal parking near the tech park.
+C1028,12.975_77.58,2026-06-29T23:13:50.657889,Taxi stand overflowing onto the main road.
+C1029,12.96_77.575,2026-07-01T18:13:50.657889,"Truck unloaded goods during peak hour, total gridlock."
+C1030,12.97_77.545,2026-07-04T16:13:50.657889,Cars blocking driveway near the junction every evening.
+C1031,12.96_77.58,2026-07-06T16:13:50.657889,Traffic police nowhere to be seen while cars block the intersection.
+C1032,12.965_77.575,2026-06-30T06:13:50.657889,Delivery boys parking haphazardly on the corner.
+C1033,12.98_77.61,2026-06-30T11:13:50.657889,People double parking outside the bakery.
+C1034,12.98_77.605,2026-07-03T13:13:50.657889,Traffic police nowhere to be seen while cars block the intersection.
+C1035,12.96_77.575,2026-07-03T23:13:50.657889,Bus stop is completely blocked by parked private vehicles.
+C1036,12.995000000000001_77.545,2026-07-06T02:13:50.657889,Traffic police nowhere to be seen while cars block the intersection.
+C1037,12.995000000000001_77.545,2026-07-02T14:13:50.657889,"Bikes parked on the footpath, pedestrians have to walk on the road."
+C1038,13.07_77.58500000000001,2026-07-03T00:13:50.657889,Traffic police nowhere to be seen while cars block the intersection.
+C1039,12.965_77.575,2026-07-06T05:13:50.657889,Delivery boys parking haphazardly on the corner.
+C1040,12.965_77.575,2026-06-29T04:13:50.657889,Bus stop is completely blocked by parked private vehicles.
+C1041,12.97_77.545,2026-07-05T02:13:50.657889,Taxi stand overflowing onto the main road.
+C1042,12.965_77.575,2026-06-30T00:13:50.657889,Taxi stand overflowing onto the main road.
+C1043,13.035_77.58500000000001,2026-07-06T05:13:50.657889,"Bikes parked on the footpath, pedestrians have to walk on the road."
+C1044,12.93_77.69,2026-07-01T00:13:50.657889,No parking zone ignored by autos.
+C1045,12.975_77.575,2026-07-03T19:13:50.657889,Taxi stand overflowing onto the main road.
+C1046,12.975_77.57000000000001,2026-07-04T10:13:50.657889,Delivery boys parking haphazardly on the corner.
+C1047,13.07_77.58500000000001,2026-06-30T13:13:50.657889,Cars blocking driveway near the junction every evening.
+C1048,13.005_77.69500000000001,2026-07-02T23:13:50.657889,"Bikes parked on the footpath, pedestrians have to walk on the road."
+C1049,12.975_77.57000000000001,2026-07-05T00:13:50.657889,Huge traffic jam caused by illegal parking near the tech park.
+C1050,12.965_77.575,2026-06-29T00:13:50.657889,Cars blocking driveway near the junction every evening.
+C1051,12.96_77.575,2026-07-06T13:13:50.657889,Cars blocking driveway near the junction every evening.
+C1052,12.995000000000001_77.545,2026-07-02T09:13:50.657889,"Bikes parked on the footpath, pedestrians have to walk on the road."
+C1053,12.975_77.57000000000001,2026-07-03T02:13:50.657889,Taxi stand overflowing onto the main road.
+C1054,13.005_77.57000000000001,2026-07-02T13:13:50.657889,"Bikes parked on the footpath, pedestrians have to walk on the road."
+C1055,12.965_77.575,2026-07-06T09:13:50.657889,Bus stop is completely blocked by parked private vehicles.
+C1056,13.035_77.58500000000001,2026-06-30T17:13:50.657889,People double parking outside the bakery.
+C1057,12.98_77.60000000000001,2026-07-05T21:13:50.657889,Cars blocking driveway near the junction every evening.
+C1058,12.97_77.545,2026-07-04T09:13:50.657889,No parking zone ignored by autos.
+C1059,12.98_77.605,2026-07-03T06:13:50.657889,Taxi stand overflowing onto the main road.
+C1060,12.99_77.58500000000001,2026-07-04T14:13:50.657889,Traffic police nowhere to be seen while cars block the intersection.
+C1061,12.93_77.69,2026-07-02T14:13:50.657889,"Bikes parked on the footpath, pedestrians have to walk on the road."
+C1062,12.97_77.55,2026-07-05T22:13:50.657889,"Truck unloaded goods during peak hour, total gridlock."
+C1063,12.97_77.55,2026-06-30T15:13:50.657889,"Bikes parked on the footpath, pedestrians have to walk on the road."
+C1064,12.99_77.58500000000001,2026-07-06T03:13:50.657889,Taxi stand overflowing onto the main road.
+C1065,13.07_77.58500000000001,2026-06-29T01:13:50.657889,Bus stop is completely blocked by parked private vehicles.
+C1066,13.07_77.58500000000001,2026-07-05T10:13:50.657889,"Bikes parked on the footpath, pedestrians have to walk on the road."
+C1067,12.97_77.545,2026-07-06T11:13:50.657889,Bus stop is completely blocked by parked private vehicles.
+C1068,12.995000000000001_77.545,2026-07-06T14:13:50.657889,Traffic police nowhere to be seen while cars block the intersection.
+C1069,12.975_77.575,2026-06-30T23:13:50.657889,No parking zone ignored by autos.
+C1070,12.98_77.605,2026-06-29T05:13:50.657889,"Bikes parked on the footpath, pedestrians have to walk on the road."
+C1071,12.96_77.575,2026-07-04T11:13:50.657889,People double parking outside the bakery.
+C1072,12.96_77.575,2026-07-01T07:13:50.657889,Cars blocking driveway near the junction every evening.
+C1073,12.975_77.575,2026-07-05T12:13:50.657889,No parking zone ignored by autos.
+C1074,12.97_77.575,2026-07-01T18:13:50.657889,"Bikes parked on the footpath, pedestrians have to walk on the road."
+C1075,12.93_77.69,2026-07-05T18:13:50.657889,"Truck unloaded goods during peak hour, total gridlock."
+C1076,12.96_77.58,2026-06-30T16:13:50.657889,Cars blocking driveway near the junction every evening.
+C1077,12.99_77.58500000000001,2026-07-02T19:13:50.657889,Traffic police nowhere to be seen while cars block the intersection.
+C1078,13.01_77.55,2026-06-30T10:13:50.657889,No parking zone ignored by autos.
+C1079,13.005_77.57000000000001,2026-06-28T22:13:50.657889,Huge traffic jam caused by illegal parking near the tech park.

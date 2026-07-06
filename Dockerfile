@@ -6,11 +6,11 @@ COPY backend/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY backend/ ./backend/
-COPY data.csv.gz .
+COPY data.csv .
 
 WORKDIR /app/backend
 
-ENV DATA_PATH=/app/data.csv.gz
+ENV DATA_PATH=/app/data.csv
 ENV MODELS_DIR=/app/backend/models
 ENV HF_SPACE=true
 

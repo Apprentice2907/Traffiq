@@ -157,6 +157,27 @@
     }
     .leaflet-popup-tip { background: #ffffff; }
 
+    #explain-panel {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      z-index: 1000;
+      width: 280px;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      padding: 16px;
+      display: none;
+      border: 1px solid var(--border);
+      backdrop-filter: blur(4px);
+    }
+    .explain-title { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .explain-cause { font-size: 12px; color: var(--danger); font-weight: 500; margin-bottom: 12px; line-height: 1.4; }
+    .explain-score { font-size: 12px; color: var(--muted); margin-bottom: 12px; }
+    .explain-citizen { font-size: 11px; background: #eff6ff; color: #1e40af; padding: 6px; border-radius: 4px; margin-bottom: 10px; border: 1px solid #bfdbfe; font-weight: 500;}
+    .close-btn { position: absolute; top: 12px; right: 12px; cursor: pointer; color: var(--muted); font-size: 16px; font-weight: bold; }
+    .close-btn:hover { color: var(--text); }
+
     /* CHARTS */
     .charts-container { display: flex; flex-direction: column; gap: 20px; }
     .chart-box { height: 180px; position: relative; }
@@ -366,9 +387,18 @@
     <div>
       <p class="section-label">Geospatial & Temporal Analysis</p>
       <div class="main-row">
-        <div class="card" style="padding: 16px;">
+        <div class="card" style="padding: 16px; position: relative;">
           <h3 class="map-header">Live Violation Heatmap — Bangalore</h3>
           <div id="map"></div>
+          
+          <div id="explain-panel">
+            <div class="close-btn" onclick="document.getElementById('explain-panel').style.display='none'">×</div>
+            <div class="explain-title" id="explain-zone-title">Zone Explainability</div>
+            <div class="explain-score" id="explain-score">Risk Score: 0</div>
+            <div class="explain-cause" id="explain-cause">Primary Cause</div>
+            <div class="explain-citizen" id="explain-citizen" style="display:none;"></div>
+            <div style="height: 120px;"><canvas id="explainChart"></canvas></div>
+          </div>
         </div>
         <div class="charts-container">
           <div class="card">
@@ -517,6 +547,8 @@
       return '#16a34a';
     }
 
+    let explainChartObj = null;
+
     document.addEventListener('DOMContentLoaded', async () => {
       // 1. STATS
       try {
@@ -580,7 +612,44 @@
               <span style="font-size:12px;color:#64748b;">Score: ${h.avg_score} | Peak: ${h.peak_hour_label}</span><br>
               <span class="risk-badge ${riskCls}" style="margin-top:6px;">${h.risk_level}</span>
             </div>
-          `);
+          `).on('click', async () => {
+            const panel = document.getElementById('explain-panel');
+            panel.style.display = 'block';
+            document.getElementById('explain-zone-title').innerText = "Zone: " + h.grid_id;
+            document.getElementById('explain-score').innerHTML = `Risk Score: <strong>${h.avg_score}</strong>`;
+            document.getElementById('explain-cause').innerText = "Loading explanation...";
+            
+            try {
+                const expRes = await fetch(`${API}/api/explain/${h.grid_id}`);
+                const expData = await expRes.json();
+                document.getElementById('explain-cause').innerText = expData.primary_cause;
+                
+                const cit = document.getElementById('explain-citizen');
+                if (expData.citizen_signal && expData.citizen_signal.complaint_count > 0) {
+                    cit.style.display = 'block';
+                    cit.innerText = `Citizen Reports: ${expData.citizen_signal.complaint_count} complaints, avg urgency: ${expData.citizen_signal.average_urgency}`;
+                } else {
+                    cit.style.display = 'none';
+                }
+                
+                const ctx = document.getElementById('explainChart').getContext('2d');
+                if (explainChartObj) explainChartObj.destroy();
+                
+                const labels = Object.keys(expData.feature_importances);
+                const data = Object.values(expData.feature_importances);
+                
+                explainChartObj = new Chart(ctx, {
+                    type: 'bar',
+                    data: { labels, datasets: [{ data, backgroundColor: '#3b82f6', borderRadius: 2 }] },
+                    options: {
+                        indexAxis: 'y',
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: { x: { display: false }, y: { ticks: { font: { size: 10 } } } }
+                    }
+                });
+            } catch (err) { console.error(err); document.getElementById('explain-cause').innerText = "Error loading explanation."; }
+          });
         });
 
         const tbody = document.getElementById('hotspot-tbody');

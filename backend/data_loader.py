@@ -3,7 +3,7 @@ import numpy as np
 import json
 import os
 
-DATA_PATH = os.environ.get("DATA_PATH", "data.csv")
+DATA_PATH = os.environ.get("DATA_PATH", os.path.join(os.path.dirname(__file__), "..", "data.csv"))
 
 class DataLoader:
     def __init__(self, file_path=DATA_PATH):
@@ -48,10 +48,9 @@ class DataLoader:
             (df['longitude'] >= 77.4) & (df['longitude'] <= 77.8)
         ]
         
-        IS_HF = os.environ.get("HF_SPACE", False)
         IS_RENDER = os.environ.get("RENDER", False)
         
-        if IS_HF or IS_RENDER:
+        if IS_RENDER:
             df = df.sample(n=min(50000, len(df)), random_state=42)
             print(f"Cloud mode: sampled to {len(df)} rows")
         

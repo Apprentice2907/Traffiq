@@ -23,18 +23,28 @@ class ParkingCongestionModel:
         self._load_models_if_exist()
 
     def load(self):
+        IS_HF = os.environ.get("HF_SPACE", False)
         model_path = os.path.join(self.model_dir, "model.pkl")
-        if os.path.exists(model_path):
-            # Load existing model
+        
+        if IS_HF:
+            # Always retrain on HF to use full dataset
+            print("HF mode: retraining on full dataset...")
+            from data_loader import DataLoader
+            DATA_PATH = os.environ.get("DATA_PATH", "../data.csv")
+            dl = DataLoader(DATA_PATH)
+            df = dl.load_and_clean()
+            df = dl.create_grid_cells(df)
+            self.train(df)
+        elif os.path.exists(model_path):
+            print("Loading saved model...")
             self.model = joblib.load(model_path)
             self.vehicle_encoder = joblib.load(os.path.join(self.model_dir, "vehicle_encoder.pkl"))
             self.violation_encoder = joblib.load(os.path.join(self.model_dir, "violation_encoder.pkl"))
             self.scaler = joblib.load(os.path.join(self.model_dir, "scaler.pkl"))
         else:
-            # No saved model found — train from scratch
-            print("No saved model found. Training from scratch...")
+            print("No model found, training...")
             from data_loader import DataLoader
-            DATA_PATH = os.environ.get("DATA_PATH", "data.csv")
+            DATA_PATH = os.environ.get("DATA_PATH", "../data.csv")
             dl = DataLoader(DATA_PATH)
             df = dl.load_and_clean()
             df = dl.create_grid_cells(df)
@@ -86,7 +96,7 @@ class ParkingCongestionModel:
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
         
         print("Training XGBoost Regressor...")
-        IS_CLOUD = os.environ.get("HF_SPACE") or os.environ.get("RENDER")
+        IS_CLOUD = os.environ.get("RENDER")
 
         params = dict(
             n_estimators=100 if IS_CLOUD else 200,
